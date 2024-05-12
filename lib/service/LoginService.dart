@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import '../models/model_item_provider.dart';
-import '../models/user_login_model.dart';
+import '../models/product_model.dart';
 
 class LoginService {
   //static const _url = "$baseUrl/member";

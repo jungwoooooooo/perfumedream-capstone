@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import '../models/user_login_model.dart'; // user_login_model.dart 파일이 필요할 것입니다.
 
 class PasswordCheckService {
 
