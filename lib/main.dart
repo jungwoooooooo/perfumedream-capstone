@@ -38,6 +38,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => CartProvider()),
       ],
       child: MaterialApp(
+        theme: ThemeData(
+            fontFamily: "Compagnon"
+        ),
         title: 'Flutter Shopping mall',
         routes: {
           '/index': (context) => IndexScreen(),

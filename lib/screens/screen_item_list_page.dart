@@ -26,7 +26,11 @@ class _ItemListPageState extends State<ItemListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("제품 리스트"),
+        title: const Text("Perfume Dream",
+        style: TextStyle(
+          fontFamily: "Compagnon-Roman",
+          fontWeight: FontWeight.w600,
+        ),),
         centerTitle: true,
         actions: [
           IconButton(

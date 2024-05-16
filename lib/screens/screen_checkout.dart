@@ -473,6 +473,7 @@ class _ItemCheckoutPageState extends State<ItemCheckoutPage> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(5),
               ),
+              backgroundColor: Colors.black87,
             ),
             child: const Padding(
               padding: EdgeInsets.symmetric(vertical: 22),

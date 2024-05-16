@@ -7,6 +7,8 @@ import 'package:kkk_shop/screens/screen_checkout.dart';
 import '../constants.dart';
 import '../models/model_product.dart';
 
+final buttonColor = MaterialStateProperty.all<Color>(Colors.black);
+
 class ItemBasketPage extends StatefulWidget {
   const ItemBasketPage({super.key});
 
@@ -62,7 +64,7 @@ class _ItemBasketPageState extends State<ItemBasketPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("장바구니"),
+        title: const Text("Cart"),
         centerTitle: true,
       ),
       body: cartMap.isEmpty
@@ -127,6 +129,10 @@ class _ItemBasketPageState extends State<ItemBasketPage> {
                         },
                       ));
                     },
+                    style: ButtonStyle(
+                      // backgroundColor 속성을 사용하여 배경색을 지정합니다
+                      backgroundColor: buttonColor,
+                    ),
                     child:
                     Text("총 ${numberFormat.format(totalPrice)}원 결제하기"),
                   ));
