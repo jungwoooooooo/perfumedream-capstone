@@ -60,7 +60,7 @@ class PasswordRecoveryScreen extends StatelessWidget {
                 String id = idController.text.trim();
                 String name = nameController.text.trim();
                 String phone = phoneController.text.trim(); // Retrieve phone number
-                bool emailSent = await FindService().sendPasswordResetEmail(id, name, phone); // Update this line
+                bool emailSent = await FindService().sendPasswordByEmail(id, name, phone); // Update this line
                 if (emailSent) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('비밀번호 재설정 링크를 이메일로 전송했습니다.')),

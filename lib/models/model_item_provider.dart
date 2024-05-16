@@ -1,5 +1,3 @@
-// models/model_item_provider.dart
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'model_item.dart';
@@ -20,12 +18,6 @@ class ItemProvider with ChangeNotifier {
       }).toList();
     });
     notifyListeners();
-  }
-
-  //새로 추가 한 것임 !!
-  Future<Item> fetchItemById(String id) async {
-    DocumentSnapshot snapshot = await itemsReference.doc(id).get();
-    return Item.fromSnapshot(snapshot);
   }
 
   Future<void> search(String query) async {

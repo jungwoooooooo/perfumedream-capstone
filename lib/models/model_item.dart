@@ -1,8 +1,6 @@
-// models/model_item.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Item {
-  late int quantity;
   late String id;
   late String title;
   late String brand;
@@ -12,7 +10,6 @@ class Item {
   late int price;
 
   Item({
-    required this.quantity,
     required this.id,
     required this.title,
     required this.brand,
@@ -25,7 +22,6 @@ class Item {
   Item.fromSnapshot(DocumentSnapshot snapshot) {
     Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
     id = snapshot.id;
-    quantity = data['quantity'];
     title = data['title'];
     brand = data['brand'];
     description = data['description'];
@@ -35,7 +31,6 @@ class Item {
   }
 
   Item.fromMap(Map<String, dynamic> data) {
-    quantity = data['quantity'];
     id = data['id'];
     title = data['title'];
     brand = data['brand'];
@@ -47,7 +42,6 @@ class Item {
 
   Map<String, dynamic> toSnapshot() {
     return {
-      'quantity': quantity,
       'id': id,
       'title': title,
       'brand': brand,

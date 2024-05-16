@@ -1,11 +1,13 @@
 // main.dart
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:kkk_shop/models/model_product_provider.dart';
 import 'package:kkk_shop/screens/screen_detail.dart';
 import 'package:kkk_shop/screens/screen_find_id.dart';
 import 'package:kkk_shop/screens/screen_find_password.dart';
 import 'package:kkk_shop/screens/screen_search.dart';
 import 'package:provider/provider.dart';
+import 'constants.dart';
 import 'firebase_options.dart';
 import 'models/model_auth.dart';
 import 'models/model_cart.dart';
@@ -18,6 +20,7 @@ import 'screens/screen_register.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  initializeSharedPreferences();
   await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform
   );
@@ -30,7 +33,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => FirebaseAuthProvider()),
-        ChangeNotifierProvider(create: (_) => ItemProvider()),
+        ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProvider(create: (_) => QueryProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
       ],

@@ -2,6 +2,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kkk_shop/screens/screen_basket_page.dart';
+import 'package:kkk_shop/screens/screen_item_list_page.dart';
 
 import '../tabs/tab_cart.dart';
 import '../tabs/tab_home.dart';
@@ -21,9 +23,11 @@ class _IndexScreenState extends State<IndexScreen> {
   int _currentIndex = 0;
 
   final List<Widget> tabs = [
-    TabHome(),
+    //TabHome(),
+    ItemListPage(),
     TabSearch(),
-    TabCart(),
+    //TabCart(),
+    ItemBasketPage(),
     TabProfile(),
   ];
 

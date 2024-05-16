@@ -6,6 +6,7 @@ import 'package:kkk_shop/service/Find_id_password_Service.dart';
 class IdRecoveryScreen extends StatelessWidget {
 
   IdCheckService idCheckService = IdCheckService();
+  FindService findService = FindService(); // Add this line
 
   @override
   Widget build(BuildContext context) {
@@ -48,14 +49,15 @@ class IdRecoveryScreen extends StatelessWidget {
 
                 String email = emailController.text.trim();
                 String name = nameController.text.trim(); // Retrieve name
-                String? id = await FindService().findIdWithEmail(email, name); // Update this line
-                if (id != null) {
+                String? id = await findService.findIdWithEmail(name, email); // Update this line
+                bool emailSent = await findService.sendUserInfoByEmail(email, name); // Update this line
+                if (id != null && emailSent) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('찾은 아이디: $id')),
+                    SnackBar(content: Text('찾은 아이디: $id, 정보를 이메일로 전송했습니다.')), // Update this line
                   );
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('입력한 정보로 등록된 아이디가 없습니다.')),
+                    SnackBar(content: Text('입력한 정보로 등록된 아이디가 없거나 이메일 전송에 실패했습니다.')), // Update this line
                   );
                 }
               },

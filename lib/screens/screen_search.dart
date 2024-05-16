@@ -1,14 +1,14 @@
 // screens/screen_search.dart
 import 'package:flutter/material.dart';
+import 'package:kkk_shop/models/model_product_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../models/model_item_provider.dart';
 import '../models/model_query.dart';
 
 class SearchScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final itemProvider = Provider.of<ItemProvider>(context);
+    final productProvider = Provider.of<ProductProvider>(context);
     final queryProvider = Provider.of<QueryProvider>(context);
     return Scaffold(
       appBar: AppBar(
@@ -32,7 +32,7 @@ class SearchScreen extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () {
-                itemProvider.search(queryProvider.text);
+                productProvider.search(queryProvider.text);
               },
               icon: Icon(Icons.search_rounded))
         ],
@@ -45,26 +45,26 @@ class SearchScreen extends StatelessWidget {
                     crossAxisCount: 2,
                     childAspectRatio: 1 / 1.5,
                   ),
-                  itemCount: itemProvider.searchItem.length,
+                  itemCount: productProvider.searchProduct.length,
                   itemBuilder: (context, index) {
                     return GridTile(
                         child: InkWell(
                           onTap: () {
                             Navigator.pushNamed(context, '/detail',
-                                arguments: itemProvider.searchItem[index]);
+                                arguments: productProvider.searchProduct[index]);
                           },
                           child: Container(
                             padding: EdgeInsets.all(10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Image.network(itemProvider.searchItem[index].imageUrl),
+                                Image.network(productProvider.searchProduct[index].productImageUrl ?? ''),
                                 Text(
-                                  itemProvider.searchItem[index].title,
+                                  productProvider.searchProduct[index].productName ?? '',
                                   style: TextStyle(fontSize: 20),
                                 ),
                                 Text(
-                                  itemProvider.searchItem[index].price.toString() + '원',
+                                  productProvider.searchProduct[index].price.toString() + '원',
                                   style: TextStyle(fontSize: 16, color: Colors.red),
                                 )
                               ],

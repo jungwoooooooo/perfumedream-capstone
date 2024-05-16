@@ -1,7 +1,7 @@
-// tabs/tab_home.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../models/model_item_provider.dart';
 
 class TabHome extends StatelessWidget{
