@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:kkk_shop/screens/screen_basket_page.dart';
@@ -10,12 +9,14 @@ class ItemDetailsPage extends StatefulWidget {
   String productName;
   String productImageUrl;
   double price;
+  String category;
   ItemDetailsPage(
       {super.key,
         required this.productNo,
         required this.productName,
         required this.productImageUrl,
-        required this.price});
+        required this.price,
+        required this.category});
 
   @override
   State<ItemDetailsPage> createState() => _ItemDetailsPageState();
@@ -44,12 +45,16 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
             productPriceContainer(),
             productQuantityContainer(),
             productTotalPriceContainer(),
+            productCategoryContainer(),
           ],
         ),
       ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(20),
         child: FilledButton(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.black),
+          ),
           onPressed: () {
             //! 임시 장바구니 변수 Map 선언 - 디스크에서 받아옴
             Map<String, dynamic> cartMap =
@@ -178,6 +183,15 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+  Widget productCategoryContainer() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Text(
+        "카테고리: ${widget.category}",
+        textScaleFactor: 1.3,
       ),
     );
   }

@@ -334,6 +334,9 @@ class _ItemCheckoutPageState extends State<ItemCheckoutPage> {
                       ));
                     }
                   },
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.black, // 배경색을 검은색으로 설정
+                  ),
                   child:
                   Text("총 ${numberFormat.format(totalPrice)}원 결제하기"),
                 ));

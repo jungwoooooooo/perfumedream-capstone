@@ -110,6 +110,9 @@ class _ItemOrderResultPageState extends State<ItemOrderResultPage> {
             onPressed: () {
               Navigator.of(context).popUntil((route) => route.isFirst);
             },
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.black, // 배경색을 검은색으로 설정
+            ),
             child: const Text("홈으로"),
           )),
     );

@@ -8,7 +8,6 @@ import '../enums/payment_status.dart';
 import '../models/model_oder.dart';
 import '../models/model_product.dart';
 
-
 class MyOrderListPage extends StatefulWidget {
   const MyOrderListPage({super.key});
 
@@ -17,7 +16,6 @@ class MyOrderListPage extends StatefulWidget {
 }
 
 class _MyOrderListPageState extends State<MyOrderListPage> {
-  //! 먼저 주문 데이터를 가져옵니다.
   final orderListRef = FirebaseFirestore.instance
       .collection("orders")
       .withConverter(
@@ -57,7 +55,8 @@ class _MyOrderListPageState extends State<MyOrderListPage> {
                   builder: (context, productSnapshot) {
                     if (productSnapshot.hasData) {
                       //! 제품 상세 정보를 가져온 후, orderContainer에 데이터를 전달합니다.
-                      Product product = productSnapshot.data!.docs.first.data();
+                      Product product =
+                      productSnapshot.data!.docs.first.data();
                       return orderContainer(
                         productNo: document.data().productNo ?? 0,
                         productName: product.productName ?? "",
@@ -103,6 +102,9 @@ class _MyOrderListPageState extends State<MyOrderListPage> {
           onPressed: () {
             Navigator.of(context).pop();
           },
+          style: FilledButton.styleFrom(
+            backgroundColor: Colors.black, // Change to desired color
+          ),
           child: const Text("홈으로"),
         ),
       ),
@@ -188,11 +190,18 @@ class _MyOrderListPageState extends State<MyOrderListPage> {
             children: [
               FilledButton.tonal(
                 onPressed: () {},
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.black54, // Change to desired color
+                  foregroundColor: Colors.white, // Change text color to white
+                ),
                 child: const Text("주문취소"),
               ),
               const SizedBox(width: 10),
               FilledButton(
                 onPressed: () {},
+                style: FilledButton.styleFrom(
+                  backgroundColor: Colors.black, // Change to desired color
+                ),
                 child: const Text("배송조회"),
               ),
             ],

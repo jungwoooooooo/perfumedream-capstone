@@ -4,6 +4,7 @@ class Product {
   String? productDetails;
   String? productImageUrl;
   double? price;
+  String? category;
 
   Product({
     this.productNo,
@@ -11,6 +12,7 @@ class Product {
     this.productDetails,
     this.productImageUrl,
     this.price,
+    this.category
   });
 
   Product.fromJson(Map<String, Object?> json)
@@ -19,6 +21,7 @@ class Product {
     productName: json['productName'] as String,
     productImageUrl: json['productImageUrl'] as String,
     price: (json['price'] as int).toDouble(),
+    category: json['category'] as String
   );
 
   Map<String, dynamic> toJson() {
@@ -28,6 +31,7 @@ class Product {
     data['productDetails'] = productDetails;
     data['productImageUrl'] = productImageUrl;
     data['price'] = price;
+    data['category'] = category;
     return data;
   }
 }

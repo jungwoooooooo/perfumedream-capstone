@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:kkk_shop/screens/screen_basket_page.dart';
 import 'package:kkk_shop/screens/screen_item_list_page.dart';
 
-import '../tabs/tab_cart.dart';
-import '../tabs/tab_home.dart';
+// import '../tabs/tab_cart.dart';
+// import '../tabs/tab_home.dart';
 import '../tabs/tab_profile.dart';
 import '../tabs/tab_search.dart';
 
@@ -46,7 +46,7 @@ class _IndexScreenState extends State<IndexScreen> {
           setState(() {
             _currentIndex = index;
           });
-          Navigator.pushNamed(context, '/search');
+          //Navigator.pushNamed(context, '/search');
         },
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
