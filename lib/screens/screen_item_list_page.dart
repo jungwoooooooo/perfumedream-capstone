@@ -77,11 +77,18 @@ class _ItemListPageState extends State<ItemListPage> {
                         selectedCategory = category;
                       });
                     },
-                    child: Text(category),
+                    child: Text(
+                      category,
+                      style: TextStyle(
+                        color: selectedCategory == category
+                            ? Colors.white // 선택된 카테고리의 텍스트 색상을 흰색으로 설정
+                            : Colors.white, // 선택되지 않은 카테고리의 텍스트 색상을 검은색으로 설정
+                      ),
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: selectedCategory == category
-                          ? Colors.blue
-                          : Colors.grey,
+                          ? Colors.black12
+                          : Colors.black,
                     ),
                   ),
                 );

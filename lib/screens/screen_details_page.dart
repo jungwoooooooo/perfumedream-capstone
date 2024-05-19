@@ -34,7 +34,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("제품 상세 페이지"),
+        title: const Text("details"),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -78,7 +78,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
               return const ItemBasketPage();
             }));
           },
-          child: const Text("장바구니 담기"),
+          child: const Text("Add Shopping Cart"),
         ),
       ),
     );
@@ -190,7 +190,7 @@ class _ItemDetailsPageState extends State<ItemDetailsPage> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Text(
-        "카테고리: ${widget.category}",
+        "Category: ${widget.category}",
         textScaleFactor: 1.3,
       ),
     );
