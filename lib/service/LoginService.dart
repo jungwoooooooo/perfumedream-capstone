@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/model_item_provider.dart';
 import '../models/product_model.dart';
+import '../screens/screen_item_list_page.dart';
 
 class LoginService {
-  //static const _url = "$baseUrl/member";
-  //FirebaseAuth _auth = FirebaseAuth.instance;
-  //AuthService._();
+  final FlutterSecureStorage _storage = FlutterSecureStorage();
 
   Future<void> saveMember(User user) async {
     try {
@@ -19,35 +19,25 @@ class LoginService {
         },
         body: jsonEncode(user.toJson()),
       );
-      if (response.statusCode != 201) {
-        throw Exception("Failed to send data");
-      } else {
+      if (response.statusCode == 200) {
         print("User Data sent successfully");
-        Get.to(ItemProvider());
+
+        // 응답 헤더에서 토큰 추출
+        String? authToken = response.headers['x-auth-token'];
+        if (authToken != null) {
+          print("Auth Token: $authToken");
+          // 토큰을 안전하게 저장
+          await _storage.write(key: 'authToken', value: authToken);
+
+          Get.to(ItemListPage());
+        } else {
+          throw Exception("응답 헤더에서 Auth 토큰을 찾을 수 없음");
+        }
+      } else {
+        throw Exception("데이터 전송 실패, 상태 코드: ${response.statusCode}");
       }
     } catch (e) {
-      print("Failed to send user data: ${e}");
+      print("사용자 데이터 전송 실패: ${e}");
     }
   }
 }
-
-/*  String memberId, String password, String age, String name,String phone, String email) async {
-    var uri = Uri.parse("http://10.0.2.2:3306/join");
-    Map<String, String> headers = {"Content-Type": "member/json"};
-
-    Map data = {
-      'memberId': '$memberId',
-      'password': '$password',
-      'age': '$age',
-      'phone': '$phone',
-      'email': '$email',
-      'name': '$name'
-    };
-    var body = json.encode(data);
-    var response = await http.post(uri, headers: headers, body: body);
-
-    print("${response.body}");
-
-    return response;
-  }
-*/

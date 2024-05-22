@@ -1,6 +1,7 @@
 // main.dart
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:kkk_shop/models/model_product_provider.dart';
 import 'package:kkk_shop/screens/screen_detail.dart';
 import 'package:kkk_shop/screens/screen_find_id.dart';
@@ -37,7 +38,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => QueryProvider()),
         ChangeNotifierProvider(create: (_) => CartProvider()),
       ],
-      child: MaterialApp(
+      child: GetMaterialApp(
+      //MaterialApp(
         theme: ThemeData(
             fontFamily: "Compagnon"
         ),

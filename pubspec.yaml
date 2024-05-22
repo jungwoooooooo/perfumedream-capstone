@@ -46,6 +46,7 @@ dependencies:
   mysql_client: ^0.0.27
   shared_preferences: ^2.2.3
   crypto: ^3.0.3
+  flutter_secure_storage: ^9.2.1
 
 dev_dependencies:
   flutter_test:
