@@ -24,7 +24,7 @@ class _ItemListPageState extends State<ItemListPage> {
   );
 
   // List of categories
-  final List<String> categories = ["All", "Category1", "Category2", "Category3"];
+  final List<String> categories = ["All", "Best Selling", "Man", "Woman"];
   String selectedCategory = "All";
 
   @override
