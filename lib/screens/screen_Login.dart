@@ -1,4 +1,3 @@
-// screens/screen_login.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,34 +13,42 @@ class LoginScreen extends StatelessWidget {
       create: (_) => LoginModel(),
       child: Scaffold(
         appBar: AppBar(),
-        body: Column(
-          children: [
-            IdInput(),
-            EmailInput(),
-            PasswordInput(),
-            LoginButton(),
-            Padding(
-              padding: EdgeInsets.all(10),
-              child: Divider(
-                thickness: 1,
+        body: SingleChildScrollView( // Wrap with SingleChildScrollView
+          child: Column(
+            children: [
+              IdInput(),
+              EmailInput(),
+              PasswordInput(),
+              LoginButton(),
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: Divider(
+                  thickness: 1,
+                ),
               ),
-            ),
-            // 아이디 찾기 버튼
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed('/id_recovery');
-              },
-              child: Text('아이디 찾기'),
-            ),
-            // 비밀번호 찾기 버튼
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed('/password_recovery');
-              },
-              child: Text('비밀번호 찾기'),
-            ),
-            RegisterButton(),
-          ],
+              // 아이디 찾기 버튼
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/id_recovery');
+                },
+                child: Text(
+                  '아이디 찾기',
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+              // 비밀번호 찾기 버튼
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed('/password_recovery');
+                },
+                child: Text(
+                  '비밀번호 찾기',
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+              RegisterButton(),
+            ],
+          ),
         ),
       ),
     );
@@ -137,8 +144,8 @@ class LoginButton extends StatelessWidget {
               .then((loginStatus) {
             if (loginStatus == AuthStatus.loginSuccess) {
               loginService.saveMember(User(
-                  id: id.text,
-                  password: password.text
+                id: id.text,
+                password: password.text,
               ));
 
               ScaffoldMessenger.of(context)
@@ -154,7 +161,10 @@ class LoginButton extends StatelessWidget {
             }
           });
         },
-        child: Text('로그인'),
+        child: Text(
+          '로그인',
+          style: TextStyle(color: Colors.black),
+        ),
       ),
     );
   }
@@ -164,11 +174,13 @@ class RegisterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-        onPressed: () {
-          Navigator.of(context).pushNamed('/register');
-        },
-        child: Text(
-          '회원가입 하러 가기',
-        ));
+      onPressed: () {
+        Navigator.of(context).pushNamed('/register');
+      },
+      child: Text(
+        '회원가입 하러 가기',
+        style: TextStyle(color: Colors.black),
+      ),
+    );
   }
 }

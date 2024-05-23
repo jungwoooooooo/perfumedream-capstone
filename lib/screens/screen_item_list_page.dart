@@ -30,15 +30,18 @@ class _ItemListPageState extends State<ItemListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(50),
+        child: AppBar(
+          centerTitle: true,
+          title: const Text(
           "Perfume Dream",
           style: TextStyle(
             fontFamily: "Compagnon-Roman",
             fontWeight: FontWeight.w600,
           ),
         ),
-        centerTitle: true,
+
         actions: [
           IconButton(
             icon: const Icon(Icons.account_circle),
@@ -62,10 +65,13 @@ class _ItemListPageState extends State<ItemListPage> {
           ),
         ],
       ),
+    ),
+
       body: Column(
         children: [
           // Category buttons
           SingleChildScrollView(
+            padding: EdgeInsets.only(top: 20),
             scrollDirection: Axis.horizontal,
             child: Row(
               children: categories.map((category) {
