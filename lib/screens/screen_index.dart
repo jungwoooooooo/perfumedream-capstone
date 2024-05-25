@@ -7,6 +7,7 @@ import 'package:kkk_shop/screens/screen_item_list_page.dart';
 
 // import '../tabs/tab_cart.dart';
 // import '../tabs/tab_home.dart';
+import '../tabs/tab_like.dart';
 import '../tabs/tab_profile.dart';
 import '../tabs/tab_search.dart';
 
@@ -25,7 +26,8 @@ class _IndexScreenState extends State<IndexScreen> {
   final List<Widget> tabs = [
     //TabHome(),
     ItemListPage(),
-    TabSearch(),
+    //TabSearch(),
+    LikedItemListPage(),
     //TabCart(),
     ItemBasketPage(),
     TabProfile(),
@@ -50,7 +52,7 @@ class _IndexScreenState extends State<IndexScreen> {
         },
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'search'),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: 'like'),
           BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'cart'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'profile'),
         ],
