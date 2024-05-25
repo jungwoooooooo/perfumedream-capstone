@@ -47,7 +47,7 @@ class AgeInput extends StatelessWidget {
           register.setAge(age);
         },
         decoration: InputDecoration(
-          labelText: '나이',
+          labelText: '나이(숫자 기입)',
           helperText: '',
         ),
       ),
@@ -66,7 +66,7 @@ class DetailAddrInput extends StatelessWidget {
           register.setDetailAddr(detailAddr);
         },
         decoration: InputDecoration(
-          labelText: 'detail_addr',
+          labelText: '자세한 주소(ex 동, 호수)',
           helperText: '',
         ),
       ),
@@ -85,7 +85,7 @@ class JibunAddrInput extends StatelessWidget {
           register.setJibunAddr(jibunAddr);
         },
         decoration: InputDecoration(
-          labelText: 'jibun_addr',
+          labelText: '지번 주소',
           helperText: '',
         ),
       ),
@@ -104,7 +104,7 @@ class RoadAddrInput extends StatelessWidget {
           register.setRoadAddr(roadAddr);
         },
         decoration: InputDecoration(
-          labelText: 'road_addr',
+          labelText: '도로명 주소',
           helperText: '',
         ),
       ),
@@ -123,7 +123,7 @@ class ZipcodeInput extends StatelessWidget {
           register.setZipcode(zipcode);
         },
         decoration: InputDecoration(
-          labelText: 'zipcode',
+          labelText: '우편번호',
           helperText: '',
         ),
       ),
@@ -334,7 +334,7 @@ class RegistButton extends StatelessWidget {
             }
           });
         },
-        child: Text('회원가입 !!'),
+        child: Text('회원가입 !!',style: TextStyle(color: Colors.black),),
       ),
     );
   }

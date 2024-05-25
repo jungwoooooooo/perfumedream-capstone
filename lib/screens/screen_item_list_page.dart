@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:kkk_shop/screens/screen_basket_page.dart';
 import 'package:kkk_shop/screens/screen_details_page.dart';
 import 'package:kkk_shop/screens/screen_my_order_list_page.dart';
@@ -18,30 +19,30 @@ class ItemListPage extends StatefulWidget {
 class _ItemListPageState extends State<ItemListPage> {
   final productListRef = FirebaseFirestore.instance
       .collection("products")
-      .withConverter(
+      .withConverter<Product>(
     fromFirestore: (snapshot, _) => Product.fromJson(snapshot.data()!),
     toFirestore: (product, _) => product.toJson(),
   );
 
+  final userLikesRef = FirebaseFirestore.instance.collection("user_likes");
+
   // List of categories
-  final List<String> categories = ["All", "Best Selling", "Man", "Woman"];
+  final List<String> categories = ["All", "Best Selling", "Man", "Woman", "Liked"];
   String selectedCategory = "All";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(50),
-        child: AppBar(
-          centerTitle: true,
-          title: const Text(
+      appBar: AppBar(
+        centerTitle: true,
+        title: const Text(
           "Perfume Dream",
           style: TextStyle(
             fontFamily: "Compagnon-Roman",
             fontWeight: FontWeight.w600,
+            fontSize: 28,
           ),
         ),
-
         actions: [
           IconButton(
             icon: const Icon(Icons.account_circle),
@@ -65,13 +66,11 @@ class _ItemListPageState extends State<ItemListPage> {
           ),
         ],
       ),
-    ),
-
       body: Column(
         children: [
           // Category buttons
           SingleChildScrollView(
-            padding: EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.only(top: 20),
             scrollDirection: Axis.horizontal,
             child: Row(
               children: categories.map((category) {
@@ -87,8 +86,8 @@ class _ItemListPageState extends State<ItemListPage> {
                       category,
                       style: TextStyle(
                         color: selectedCategory == category
-                            ? Colors.white // 선택된 카테고리의 텍스트 색상을 흰색으로 설정
-                            : Colors.white, // 선택되지 않은 카테고리의 텍스트 색상을 검은색으로 설정
+                            ? Colors.white
+                            : Colors.white,
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
@@ -103,66 +102,128 @@ class _ItemListPageState extends State<ItemListPage> {
           ),
           // Product list
           Expanded(
-            child: StreamBuilder(
-              stream: selectedCategory == "All"
-                  ? productListRef.orderBy("productNo").snapshots()
-                  : productListRef
-                  .where("category", isEqualTo: selectedCategory)
-                  .orderBy("productNo")
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return GridView(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      childAspectRatio: 0.9,
-                      crossAxisCount: 2,
-                    ),
-                    children: snapshot.data!.docs.map((document) {
-                      return productContainer(
-                        productNo: document.data().productNo ?? 0,
-                        productName: document.data().productName ?? "",
-                        productImageUrl: document.data().productImageUrl ?? "",
-                        price: document.data().price ?? 0,
-                        category: document.data().category ?? "",
-                      );
-                    }).toList(),
-                  );
-                } else if (snapshot.hasError) {
-                  return const Center(
-                    child: Text("오류가 발생했습니다."),
-                  );
-                } else {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                    ),
-                  );
-                }
-              },
-            ),
+            child: selectedCategory == "Liked"
+                ? _buildLikedProductsList()
+                : _buildProductsList(),
           ),
         ],
       ),
     );
   }
 
-  Widget productContainer({
-    required int productNo,
-    required String productName,
-    required String productImageUrl,
-    required double price,
-    required String category
-  }) {
+  Widget _buildProductsList() {
+    return StreamBuilder<QuerySnapshot<Product>>(
+      stream: selectedCategory == "All"
+          ? productListRef.orderBy("productNo").snapshots()
+          : productListRef
+          .where("category", isEqualTo: selectedCategory)
+          .orderBy("productNo")
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              childAspectRatio: 0.9,
+              crossAxisCount: 2,
+            ),
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              var document = snapshot.data!.docs[index];
+              var product = document.data();
+              return productContainer(
+                product: product,
+              );
+            },
+          );
+        } else if (snapshot.hasError) {
+          return const Center(
+            child: Text("오류가 발생했습니다."),
+          );
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Widget _buildLikedProductsList() {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    return StreamBuilder<QuerySnapshot>(
+      stream: userLikesRef.doc(uid).collection("likes").snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          var likedProductIds = snapshot.data!.docs.map((doc) => doc.id).toList();
+          if (likedProductIds.isEmpty) {
+            return const Center(child: Text("좋아요한 상품이 없습니다."));
+          }
+          return FutureBuilder<List<DocumentSnapshot<Product>>>(
+            future: Future.wait(
+              likedProductIds.map((id) => productListRef.doc(id).get()).toList(),
+            ),
+            builder: (context, futureSnapshot) {
+              if (futureSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                  ),
+                );
+              } else if (futureSnapshot.hasError) {
+                return const Center(
+                  child: Text("오류가 발생했습니다."),
+                );
+              } else if (futureSnapshot.hasData) {
+                var products = futureSnapshot.data!.where((doc) => doc.exists).map((doc) => doc.data()!).toList();
+                return GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    childAspectRatio: 0.9,
+                    crossAxisCount: 2,
+                  ),
+                  itemCount: products.length,
+                  itemBuilder: (context, index) {
+                    var product = products[index];
+                    return productContainer(
+                      product: product,
+                    );
+                  },
+                );
+              } else {
+                return const Center(
+                  child: Text("오류가 발생했습니다."),
+                );
+              }
+            },
+          );
+        } else if (snapshot.hasError) {
+          return const Center(
+            child: Text("오류가 발생했습니다."),
+          );
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Widget productContainer({required Product product}) {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
           builder: (context) {
             return ItemDetailsPage(
-              productNo: productNo,
-              productName: productName,
-              productImageUrl: productImageUrl,
-              price: price,
-              category : category
+              productNo: product.productNo ?? 0,
+              productName: product.productName ?? "No Name",
+              productImageUrl: product.productImageUrl ?? "",
+              price: product.price ?? 0,
+              category: product.category ?? "Uncategorized",
             );
           },
         ));
@@ -171,27 +232,65 @@ class _ItemListPageState extends State<ItemListPage> {
         padding: const EdgeInsets.all(5),
         child: Column(
           children: [
-            CachedNetworkImage(
-              height: 140,
-              fit: BoxFit.cover,
-              imageUrl: productImageUrl,
-              placeholder: (context, url) {
-                return const Center(
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
+            Stack(
+              children: [
+                CachedNetworkImage(
+                  height: 140,
+                  fit: BoxFit.cover,
+                  imageUrl: product.productImageUrl ?? "",
+                  placeholder: (context, url) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                      ),
+                    );
+                  },
+                  errorWidget: (context, url, error) {
+                    return const Center(
+                      child: Text("오류 발생"),
+                    );
+                  },
+                ),
+                Positioned(
+                  right: 0,
+                  child: StreamBuilder<DocumentSnapshot>(
+                    stream: userLikesRef
+                        .doc(uid)
+                        .collection("likes")
+                        .doc((product.productNo ?? 0).toString())
+                        .snapshots(),
+                    builder: (context, snapshot) {
+                      bool isLiked = snapshot.hasData && snapshot.data!.exists;
+                      return IconButton(
+                        icon: Icon(
+                          isLiked ? Icons.favorite : Icons.favorite_border,
+                          color: Colors.red,
+                        ),
+                        onPressed: () {
+                          if (isLiked) {
+                            userLikesRef
+                                .doc(uid)
+                                .collection("likes")
+                                .doc((product.productNo ?? 0).toString())
+                                .delete();
+                          } else {
+                            userLikesRef
+                                .doc(uid)
+                                .collection("likes")
+                                .doc((product.productNo ?? 0).toString())
+                                .set({"productNo": product.productNo ?? 0});
+                          }
+                        },
+                      );
+                    },
                   ),
-                );
-              },
-              errorWidget: (context, url, error) {
-                return const Center(
-                  child: Text("오류 발생"),
-                );
-              },
+                ),
+              ],
             ),
             Container(
               padding: const EdgeInsets.all(8),
               child: Text(
-                productName,
+                product.productName ?? "No Name",
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
@@ -199,7 +298,7 @@ class _ItemListPageState extends State<ItemListPage> {
             ),
             Container(
               padding: const EdgeInsets.all(8),
-              child: Text("${numberFormat.format(price)}원"),
+              child: Text("${numberFormat.format(product.price ?? 0)}원"),
             ),
           ],
         ),
@@ -207,3 +306,214 @@ class _ItemListPageState extends State<ItemListPage> {
     );
   }
 }
+
+
+
+// import 'package:flutter/material.dart';
+// import 'package:cached_network_image/cached_network_image.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:kkk_shop/screens/screen_basket_page.dart';
+// import 'package:kkk_shop/screens/screen_details_page.dart';
+// import 'package:kkk_shop/screens/screen_my_order_list_page.dart';
+//
+// import '../constants.dart';
+// import '../models/model_product.dart';
+//
+// class ItemListPage extends StatefulWidget {
+//   const ItemListPage({super.key});
+//
+//   @override
+//   State<ItemListPage> createState() => _ItemListPageState();
+// }
+//
+// class _ItemListPageState extends State<ItemListPage> {
+//   final productListRef = FirebaseFirestore.instance
+//       .collection("products")
+//       .withConverter(
+//     fromFirestore: (snapshot, _) => Product.fromJson(snapshot.data()!),
+//     toFirestore: (product, _) => product.toJson(),
+//   );
+//
+//   // List of categories
+//   final List<String> categories = ["All", "Best Selling", "Man", "Woman"];
+//   String selectedCategory = "All";
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//           centerTitle: true,
+//           title: const Text(
+//           "Perfume Dream",
+//           style: TextStyle(
+//             fontFamily: "Compagnon-Roman",
+//             fontWeight: FontWeight.w600,
+//             fontSize: 28
+//           ),
+//         ),
+//
+//         actions: [
+//           IconButton(
+//             icon: const Icon(Icons.account_circle),
+//             onPressed: () {
+//               Navigator.of(context).push(MaterialPageRoute(
+//                 builder: (context) {
+//                   return const MyOrderListPage();
+//                 },
+//               ));
+//             },
+//           ),
+//           IconButton(
+//             icon: const Icon(Icons.shopping_cart),
+//             onPressed: () {
+//               Navigator.of(context).push(MaterialPageRoute(
+//                 builder: (context) {
+//                   return const ItemBasketPage();
+//                 },
+//               ));
+//             },
+//           ),
+//         ],
+//       ),
+//
+//
+//       body: Column(
+//         children: [
+//           // Category buttons
+//           SingleChildScrollView(
+//             padding: EdgeInsets.only(top: 20),
+//             scrollDirection: Axis.horizontal,
+//             child: Row(
+//               children: categories.map((category) {
+//                 return Padding(
+//                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
+//                   child: ElevatedButton(
+//                     onPressed: () {
+//                       setState(() {
+//                         selectedCategory = category;
+//                       });
+//                     },
+//                     child: Text(
+//                       category,
+//                       style: TextStyle(
+//                         color: selectedCategory == category
+//                             ? Colors.white // 선택된 카테고리의 텍스트 색상을 흰색으로 설정
+//                             : Colors.white, // 선택되지 않은 카테고리의 텍스트 색상을 검은색으로 설정
+//                       ),
+//                     ),
+//                     style: ElevatedButton.styleFrom(
+//                       backgroundColor: selectedCategory == category
+//                           ? Colors.black12
+//                           : Colors.black,
+//                     ),
+//                   ),
+//                 );
+//               }).toList(),
+//             ),
+//           ),
+//           // Product list
+//           Expanded(
+//             child: StreamBuilder(
+//               stream: selectedCategory == "All"
+//                   ? productListRef.orderBy("productNo").snapshots()
+//                   : productListRef
+//                   .where("category", isEqualTo: selectedCategory)
+//                   .orderBy("productNo")
+//                   .snapshots(),
+//               builder: (context, snapshot) {
+//                 if (snapshot.hasData) {
+//                   return GridView(
+//                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+//                       childAspectRatio: 0.9,
+//                       crossAxisCount: 2,
+//                     ),
+//                     children: snapshot.data!.docs.map((document) {
+//                       return productContainer(
+//                         productNo: document.data().productNo ?? 0,
+//                         productName: document.data().productName ?? "",
+//                         productImageUrl: document.data().productImageUrl ?? "",
+//                         price: document.data().price ?? 0,
+//                         category: document.data().category ?? "",
+//                       );
+//                     }).toList(),
+//                   );
+//                 } else if (snapshot.hasError) {
+//                   return const Center(
+//                     child: Text("오류가 발생했습니다."),
+//                   );
+//                 } else {
+//                   return const Center(
+//                     child: CircularProgressIndicator(
+//                       strokeWidth: 2,
+//                     ),
+//                   );
+//                 }
+//               },
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+//
+//   Widget productContainer({
+//     required int productNo,
+//     required String productName,
+//     required String productImageUrl,
+//     required double price,
+//     required String category
+//   }) {
+//     return GestureDetector(
+//       onTap: () {
+//         Navigator.of(context).push(MaterialPageRoute(
+//           builder: (context) {
+//             return ItemDetailsPage(
+//               productNo: productNo,
+//               productName: productName,
+//               productImageUrl: productImageUrl,
+//               price: price,
+//               category : category
+//             );
+//           },
+//         ));
+//       },
+//       child: Container(
+//         padding: const EdgeInsets.all(5),
+//         child: Column(
+//           children: [
+//             CachedNetworkImage(
+//               height: 140,
+//               fit: BoxFit.cover,
+//               imageUrl: productImageUrl,
+//               placeholder: (context, url) {
+//                 return const Center(
+//                   child: CircularProgressIndicator(
+//                     strokeWidth: 2,
+//                   ),
+//                 );
+//               },
+//               errorWidget: (context, url, error) {
+//                 return const Center(
+//                   child: Text("오류 발생"),
+//                 );
+//               },
+//             ),
+//             Container(
+//               padding: const EdgeInsets.all(8),
+//               child: Text(
+//                 productName,
+//                 style: const TextStyle(
+//                   fontWeight: FontWeight.bold,
+//                 ),
+//               ),
+//             ),
+//             Container(
+//               padding: const EdgeInsets.all(8),
+//               child: Text("${numberFormat.format(price)}원"),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }

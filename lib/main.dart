@@ -12,7 +12,6 @@ import 'constants.dart';
 import 'firebase_options.dart';
 import 'models/model_auth.dart';
 import 'models/model_cart.dart';
-import 'models/model_item_provider.dart';
 import 'models/model_query.dart';
 import 'screens/screen_splash.dart';
 import 'screens/screen_index.dart';

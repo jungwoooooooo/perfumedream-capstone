@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/product_model.dart';
+import '../models/user_model/user_login_model.dart';
 import '../screens/screen_item_list_page.dart';
 
 class LoginService {
